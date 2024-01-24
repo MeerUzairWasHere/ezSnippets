@@ -29,7 +29,7 @@ export default function Home() {
                 <h1 className="mb-6 text-center text-3xl text-neutral-800 md:text-6xl">
                     Taskify helps team move
                 </h1>
-                <div className="w-fit rounded-md bg-gradient-to-r from-fuchsia-600 to-pink-600 p-4 text-3xl text-white md:text-6xl">
+                <div className="w-fit rounded-md bg-gradient-to-r from-fuchsia-600 to-pink-600 p-3 text-3xl text-white md:text-6xl">
                     work forward.
                 </div>
             </div>
@@ -39,11 +39,11 @@ export default function Home() {
                     textFont.className
                 )}
             >
-                Collaborate,manage projects, and reach new productivity peaks.
+                Collaborate, manage projects, and reach new productivity peaks.
                 From high rises to the home office, the way your team works is
                 unique - accomplish it all with Taskify.
             </div>
-            <Button className="mt-6 " size="lg" asChild>
+            <Button className="mt-6" size="lg" asChild>
                 <Link href="/sign-up">Get Taskify for free</Link>
             </Button>
         </div>
