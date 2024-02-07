@@ -1,89 +1,65 @@
 'use client'
 
-import { Accordion } from '@/components/ui/accordion'
+import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import {
+    Activity,
+    CreditCard,
+    Layout,
+    Plus,
+    Settings,
+    User,
+} from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useOrganization, useOrganizationList } from '@clerk/nextjs'
-import { Plus } from 'lucide-react'
-import Link from 'next/link'
-import { useLocalStorage } from 'usehooks-ts'
-import { NavItem, Organization } from './nav-item'
 
-interface SidebarProps {
-    storageKey?: string
-}
-export const Sidebar = ({ storageKey = 't-sidebar-state' }: SidebarProps) => {
-    const [expanded, setExpanded] = useLocalStorage<Record<string, any>>(
-        storageKey,
-        {}
-    )
-    const { organization: activeOrganization, isLoaded: isLoadedOrg } =
-        useOrganization()
+ const routes = [
+     {
+         label: 'Snippets',
+         icon: <Layout className="mr-2 h-4 w-4" />,
+         href: `/snippets`,
+     },
+     {
+         label: 'Create New',
+         icon: <Plus className="mr-2 h-4 w-4" />,
+         href: `/new-snippet`,
+     },
+     {
+         label: 'Profile',
+         icon: <User className="mr-2 h-4 w-4" />,
+         href: `/profile`,
+     },
+ ]
 
-    const { userMemberships, isLoaded: isLoadedOrgList } = useOrganizationList({
-        userMemberships: {
-            infinite: true,
-        },
-    })
 
-    const defaultAccordionValue: string[] = Object.keys(expanded).reduce(
-        (acc: string[], key: string) => {
-            if (expanded[key]) {
-                acc.push(key)
-            }
-            return acc
-        },
-        []
-    )
+ export const Sidebar = () => {
+   
 
-    const onExpand = (id: string) => {
-        setExpanded((curr) => ({
-            ...curr,
-            [id]: !expanded[id],
-        }))
+    const router = useRouter()
+    const pathname = usePathname()
+
+    const onClick = (href: string) => {
+        router.push(href)
     }
 
-    if (!isLoadedOrg || !isLoadedOrgList || userMemberships.isLoading) {
-        return (
-            <>
-                <div className="mb-2 flex items-center justify-between">
-                    <Skeleton className="h-10 w-[50%]" />
-                    <Skeleton className="h-10 w-10" />
-                </div>
-                <div className="space-y-2">
-                    <NavItem.Skeleton />
-                    <NavItem.Skeleton />
-                    <NavItem.Skeleton />
-                </div>
-            </>
-        )
-    }
+    
     return (
         <>
-            <div className="mb-1 flex items-center text-xs font-medium">
-                <span className="pl-4">Workspaces</span>
-                <Button size="icon" asChild variant="ghost" className="ml-auto">
-                    <Link href="/select-org">
-                        <Plus className=" h-4 w-4" />
-                    </Link>
+            {routes.map((route) => (
+                <Button
+                    key={route.label}
+                    size="sm"
+                    onClick={() => onClick(route.href)}
+                    className={cn(
+                        'mb-1 w-full justify-start pl-10 font-normal',
+                        pathname === route.href && 'bg-sky-500/10  text-sky-700'
+                    )}
+                    variant="ghost"
+                >
+                    {route.icon}
+                    {route.label}
                 </Button>
-            </div>
-            <Accordion
-                type="multiple"
-                className="space-y-2"
-                defaultValue={defaultAccordionValue}
-            >
-                {userMemberships.data.map(({ organization }) => (
-                    <NavItem
-                        key={organization.id}
-                        isActive={activeOrganization?.id === organization.id}
-                        isExpanded={expanded[organization.id]}
-                        organization={organization as Organization}
-                        onExpand={onExpand}
-                    />
-                ))}
-            </Accordion>
+            ))}
         </>
     )
 }

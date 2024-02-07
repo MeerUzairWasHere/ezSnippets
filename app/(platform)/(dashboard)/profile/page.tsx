@@ -1,9 +1,9 @@
-import { OrganizationProfile } from '@clerk/nextjs'
+import { UserProfile } from '@clerk/nextjs'
 
 const SettingsPage = () => {
     return (
         <div className="w-full">
-            <OrganizationProfile
+            <UserProfile
                 appearance={{
                     elements: {
                         rootBox: {
