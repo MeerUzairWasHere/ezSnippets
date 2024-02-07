@@ -11,3 +11,4 @@ export const useMobileSidebar = create<MobileSidebarStore>((set) => ({
     onOpen: () => set({ isOpen: true }),
     onClose: () => set({ isOpen: false }),
 }))
+
