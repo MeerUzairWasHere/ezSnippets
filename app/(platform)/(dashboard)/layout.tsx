@@ -9,13 +9,13 @@ export default function DashboardLayout({
     return (
         <div className="h-full">
             <Navbar />
-            <section className="max-w-6xl px-4 pt-20 md:pt-24 2xl:max-w-screen-xl ">
+            <section className="w-full px-4 pt-20 md:pt-24  ">
                 <div className="flex gap-x-7">
-                    <div className="hidden w-64 shrink-0 md:block">
+                    <div className="hidden  w-64 shrink-0 md:block">
                         {/* Sidebar */}
                         <Sidebar />
                     </div>
-                    {children}
+                    <div className="w-full">{children}</div>
                 </div>
             </section>
         </div>

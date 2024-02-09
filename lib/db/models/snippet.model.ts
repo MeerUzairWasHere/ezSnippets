@@ -1,6 +1,7 @@
-import { Schema,  model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
- 
+
+
 const SnippetSchema = new Schema({
     clerkUserId: {
         type: String,
@@ -10,18 +11,10 @@ const SnippetSchema = new Schema({
         type: String,
         required: true
     },
-    language: {
-        type: String,
-        required: true
-    },
     code: {
         type: String,
         required: true
     },
-    description: {
-        type: String
-    },
-    tags: [String],
     createdAt: {
         type: Date,
         default: Date.now
