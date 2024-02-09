@@ -25,10 +25,10 @@ interface ISnippet {
     id?: string
     title: string
     code: string
-    createdAt: Date
+    isInfo?: boolean
 }
 
-export const SnippetCard = ({ id, title, code, createdAt }: ISnippet) => {
+export const SnippetCard = ({ id, title, code, isInfo = false }: ISnippet) => {
     const [copied, setCopied] = useState(false)
 
     const copyToClipboard = () => {
@@ -37,9 +37,11 @@ export const SnippetCard = ({ id, title, code, createdAt }: ISnippet) => {
         setTimeout(() => setCopied(false), 3000) // Reset copied state after 3 seconds
     }
     return (
-        <Card className="w-full">
+        <Card
+            className={isInfo ? ' w-full ' : 'max-h-72 w-full overflow-hidden'}
+        >
             <CardHeader>
-                <CardTitle className="flex justify-between">
+                <CardTitle className="flex justify-between text-sm md:text-lg">
                     {title}
                     <TooltipProvider>
                         <Tooltip>
@@ -62,17 +64,18 @@ export const SnippetCard = ({ id, title, code, createdAt }: ISnippet) => {
                         </Tooltip>
                     </TooltipProvider>
                 </CardTitle>
-                <CardDescription></CardDescription>
             </CardHeader>
             <CardContent>
-                <pre className="overflow-x-scroll md:overflow-auto ">
-                    <code>{code}</code>
-                </pre>
+                <Link href={`/snippets/${id}`}>
+                    <pre className="overflow-x-scroll md:overflow-auto ">
+                        <code>{code}</code>
+                    </pre>
+                </Link>
             </CardContent>
             <CardFooter className="flex  ">
                 <div className="g4 ml-auto flex gap-4">
                     <Button size="sm" variant="default" asChild>
-                        <Link href={`/snippets/${id}`}>Edit</Link>
+                        <Link href={`/snippets/edit/${id}`}>Edit</Link>
                     </Button>
                     <DeleteSnippet id={id || 'id'} />
                 </div>

@@ -41,6 +41,35 @@ export const getAllSnippetsAction = async (): Promise<SnippetType[] | null> => {
         return null;
     }
 };
+export const getSingleSnippetsAction = async (snippetId: string): Promise<SnippetType | null> => {
+    const clerkUserId = getUserClerkId();
+
+    try {
+        await connectDB();
+        const snippets = await Snippet.findOne({ clerkUserId, _id: snippetId })
+        return snippets;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};
+
+export async function updateSnippetAction(
+    id: string,
+    values: CreateAndEditSnippetType
+): Promise<SnippetType | null> {
+    const clerkUserId = getUserClerkId();
+
+    try {
+        const snippet = await Snippet.findOneAndUpdate({ clerkUserId, _id: id }, values, {
+            new: true,
+            runValidators: true
+        })
+        return snippet;
+    } catch (error) {
+        return null;
+    }
+}
 
 
 export const deleteSnippetAction = async (snippedId: string) => {

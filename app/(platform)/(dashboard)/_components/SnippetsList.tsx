@@ -2,8 +2,8 @@
 
 import { getAllSnippetsAction } from '@/actions/snippet.actions'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from 'lucide-react'
 import { SnippetCard } from './SnippetCard'
+import Link from 'next/link'
 
 export const SnippetsList = () => {
     const { data, isPending } = useQuery({
@@ -11,11 +11,9 @@ export const SnippetsList = () => {
         queryFn: () => getAllSnippetsAction(),
     })
     const snippets = data || []
-    console.log(snippets)
 
     if (isPending) return <h2 className="text-xl">Please wait...</h2>
-    if (snippets?.length < 1)
-        return <h2 className="text-xl">No Snippet Found...</h2>
+
     return (
         <>
             <div className="flex flex-col gap-5">
@@ -41,11 +39,10 @@ export const SnippetsList = () => {
                         {snippets?.map(({ _id, title, code, createdAt }) => {
                             return (
                                 <SnippetCard
-                                    key={_id.toString()}
-                                    id={_id.toString()}
+                                    key={_id}
+                                    id={_id}
                                     title={title}
                                     code={code}
-                                    createdAt={createdAt}
                                 />
                             )
                         })}

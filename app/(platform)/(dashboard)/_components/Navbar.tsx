@@ -15,7 +15,7 @@ export const Navbar = () => {
                 </div>
                 <Button
                     size="sm"
-                    variant="primary"
+                    variant="default"
                     asChild
                     className="hidden h-auto rounded-sm px-2 py-1.5 md:block"
                 >
@@ -23,7 +23,7 @@ export const Navbar = () => {
                 </Button>
                 <Button
                     size="sm"
-                    variant="primary"
+                    variant="default"
                     asChild
                     className="flex rounded-sm  md:hidden"
                 >

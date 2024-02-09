@@ -5,7 +5,7 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query'
-import { SnippetInfo } from '../../_components/SnippetInfo'
+import { EditSnippetForm } from '../../../_components/EditSnippetForm'
 
 export default async function Page({ params }: { params: { id: string } }) {
     const queryClient = new QueryClient()
@@ -15,9 +15,9 @@ export default async function Page({ params }: { params: { id: string } }) {
         queryFn: () => getSingleSnippetsAction(params.id),
     })
     return (
-        <main className="w-full  ">
+        <main className="w-full md:max-w-screen-sm">
             <HydrationBoundary state={dehydrate(queryClient)}>
-                <SnippetInfo id={params.id} />
+                <EditSnippetForm snippetId={params.id} />
             </HydrationBoundary>
         </main>
     )
