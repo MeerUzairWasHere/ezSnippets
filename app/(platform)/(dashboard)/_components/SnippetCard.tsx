@@ -65,7 +65,7 @@ export const SnippetCard = ({ id, title, code, isInfo = false }: ISnippet) => {
                     </TooltipProvider>
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-hidden">
                 <Link href={`/snippets/${id}`}>
                     <pre className="overflow-x-scroll md:overflow-auto ">
                         <code>{code}</code>
