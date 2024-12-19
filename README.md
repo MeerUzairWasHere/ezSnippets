@@ -95,8 +95,8 @@ npm install
 3. Add the following environment variables to your `.env` file:
 
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bGl0ZXJhdGUtYmFib29uLTM0LmNsZXJrLmFjY291bnRzLmRldiQ
-CLERK_SECRET_KEY=sk_test_n7Ym4r2mbLw3LHKfAjHUHxqfJNUbf8xWrVbpbl9ort
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bGl0ZXJhdGUtYmFiasdasdasdasdmFjY291bnRzLmRldiQ
+CLERK_SECRET_KEY=sk_test_n7Ym4r2mbLw3LasdasdasdasdasWrVbpbl9ort
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/snippets
