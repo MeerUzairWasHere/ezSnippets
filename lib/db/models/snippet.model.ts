@@ -1,6 +1,4 @@
-import { Schema, model, models } from "mongoose";
-
-
+import { Schema, model, models } from 'mongoose'
 
 const SnippetSchema = new Schema({
     clerkUserId: {
@@ -9,18 +7,25 @@ const SnippetSchema = new Schema({
     },
     title: {
         type: String,
-        required: true
+        required: true,
+    },
+    highlightedLines: {
+        type: [String],
+    },
+    language: {
+        type: String,
+        required: true,
     },
     code: {
         type: String,
-        required: true
+        required: true,
     },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
-});
+        default: Date.now,
+    },
+})
 
-const Snippet = models.Snippet || model("Snippet", SnippetSchema);
+const Snippet = models.Snippet || model('Snippet', SnippetSchema)
 
 export default Snippet

@@ -20,66 +20,41 @@ import Link from 'next/link'
 import { Check, Copy } from 'lucide-react'
 import { useState } from 'react'
 import { DeleteSnippet } from './DeleteSnippet'
+import { CodeBlock } from '@/components/ui/code-block'
 
 interface ISnippet {
     id?: string
     title: string
     code: string
     isInfo?: boolean
+    language?: string
+    highlightLines?: string[]
 }
 
-export const SnippetCard = ({ id, title, code, isInfo = false }: ISnippet) => {
-    const [copied, setCopied] = useState(false)
-
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(code)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 3000) // Reset copied state after 3 seconds
+export const SnippetCard = ({
+    id,
+    title,
+    language,
+    code,
+    isInfo = false,
+    highlightLines,
+}: ISnippet) => {
+    if (language == undefined) {
+        language = 'jsx'
     }
-    return (
-        <Card
-            className={isInfo ? ' w-full ' : 'max-h-72 w-full overflow-hidden'}
-        >
-            <CardHeader>
-                <CardTitle className="flex justify-between text-sm md:text-lg">
-                    {title}
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    size="sm"
-                                    variant="link"
-                                    onClick={copyToClipboard}
-                                >
-                                    {copied ? <Check /> : <Copy />}
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                {copied ? (
-                                    <p>Copied!</p>
-                                ) : (
-                                    <p>Copy to clipboard!</p>
-                                )}
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="overflow-hidden">
-                <Link href={`/snippets/${id}`}>
-                    <pre className="overflow-x-scroll md:overflow-auto ">
-                        <code>{code}</code>
-                    </pre>
-                </Link>
-            </CardContent>
-            <CardFooter className="flex  ">
-                <div className="g4 ml-auto flex gap-4">
-                    <Button size="sm" variant="default" asChild>
-                        <Link href={`/snippets/edit/${id}`}>Edit</Link>
-                    </Button>
-                    <DeleteSnippet id={id || 'id'} />
-                </div>
-            </CardFooter>
-        </Card>
-    )
+
+    if (highlightLines && highlightLines?.length > 0) {
+        const numArr = highlightLines?.map((num) => Number(num))
+        return (
+            <CodeBlock
+                id={id}
+                filename={title}
+                language={language}
+                highlightLines={numArr}
+                code={code}
+                isInfoCard={true}
+            />
+        )
+    }
+
 }

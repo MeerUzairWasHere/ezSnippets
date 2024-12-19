@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button'
-import { Code, Medal } from 'lucide-react'
 import Link from 'next/link'
 import localFont from 'next/font/local'
 import { cn } from '@/lib/utils'

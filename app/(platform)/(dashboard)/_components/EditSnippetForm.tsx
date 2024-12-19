@@ -33,8 +33,9 @@ export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
         queryFn: () => getSingleSnippetsAction(snippetId),
     })
     const { mutate, isPending } = useMutation({
-        mutationFn: (values: CreateAndEditSnippetType) =>
-            updateSnippetAction(snippetId, values),
+        mutationFn: (values: CreateAndEditSnippetType) => {
+            return updateSnippetAction(snippetId, values)
+        },
         onSuccess: (data) => {
             if (!data) {
                 toast({
@@ -56,6 +57,8 @@ export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
         defaultValues: {
             title: data?.title || '',
             code: data?.code || '',
+            language: data?.language || '',
+            highlightedLines: data?.highlightedLines,
         },
     })
 
@@ -74,9 +77,46 @@ export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
                     name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Title</FormLabel>
+                            <FormLabel>File Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="Title" {...field} />
+                                <Input
+                                    placeholder="e.g. index.html, style.css, script.js"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="language"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Language</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="e.g. jsx, tsx, css"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="highlightedLines"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Highlighted Lines</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="e.g. 4, 7, 8, 9"
+                                    {...field}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

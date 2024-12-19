@@ -3,26 +3,18 @@
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import {
-    createAndEditSnippetSchema,
-    SnippetType,
-    CreateAndEditSnippetType,
-} from '@/types'
-import { Tag, TagInput } from '@/components/ui/tag-input'
+import { createAndEditSnippetSchema, CreateAndEditSnippetType } from '@/types'
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
-
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useState } from 'react'
 import { createSnippet } from '@/actions/snippet.actions'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -33,6 +25,8 @@ const CreateSnippetForm = () => {
     const initialValues: CreateAndEditSnippetType = {
         title: '', // Title of the snippet
         code: ``, // Code content
+        language: '',
+        highlightedLines: [''],
     }
 
     const form = useForm<z.infer<typeof createAndEditSnippetSchema>>({
@@ -62,6 +56,30 @@ const CreateSnippetForm = () => {
         mutate(values)
     }
 
+    const dummyComponentCode = `import { useState } from 'react'
+    
+  const DummyComponent = () => {
+  const [count, setCount] = React.useState(0);
+
+  const handleClick = () => {
+    setCount(prev => prev + 1);
+  };
+
+  return (
+    <div className="p-4 border rounded-lg">
+      <h2 className="text-xl font-bold mb-4">Fights Counter</h2>
+      <p className="mb-2">Fight Club Fights Count: {count}</p>
+      <button 
+        onClick={handleClick}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Increment
+      </button>
+    </div>
+  );
+};
+`
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -70,9 +88,44 @@ const CreateSnippetForm = () => {
                     name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Title</FormLabel>
+                            <FormLabel>File Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="Title" {...field} />
+                                <Input
+                                    placeholder="e.g. index.html, style.css, script.js"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="language"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Language</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="e.g. jsx, tsx, css"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="highlightedLines"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Highlighted Lines</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="e.g. 4, 7, 8, 9"
+                                    {...field}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -87,7 +140,7 @@ const CreateSnippetForm = () => {
                             <FormLabel>Code</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Your code goes here"
+                                    placeholder={dummyComponentCode}
                                     rows={14}
                                     className="resize-none"
                                     {...field}

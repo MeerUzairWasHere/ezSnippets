@@ -2,8 +2,10 @@ import { deleteSnippetAction } from '@/actions/snippet.actions'
 import { Button } from '@/components/ui/button'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
+import { useRouter } from 'next/navigation'
 
 export const DeleteSnippet = ({ id }: { id: string }) => {
+    const router = useRouter()
     const { toast } = useToast()
     const queryClient = useQueryClient()
     const { mutate, isPending } = useMutation({
@@ -16,18 +18,18 @@ export const DeleteSnippet = ({ id }: { id: string }) => {
                 return
             }
             queryClient.invalidateQueries({ queryKey: ['snippets'] })
-
             toast({ description: 'Snippet removed successfully!' })
+            router.push('/snippets')
         },
     })
     return (
         <Button
-            size="sm"
+            size="default"
             disabled={isPending}
             onClick={() => mutate(id)}
             variant="destructive"
         >
-            {isPending ? "Deleting" : 'Delete'}
+            {isPending ? 'Deleting' : 'Delete'}
         </Button>
     )
 }
