@@ -37,7 +37,8 @@
 
 ## About The Project
 
-![Screen Shot](https://raw.githubusercontent.com/MeerUzairWasHere/ezSnippets/main/demo.png)
+![Screen Shot](https://github.com/user-attachments/assets/42104d9a-73be-4730-92a0-f46c4b317958)
+
 
 <b>ezSnippets</b> is a powerful web application designed to simplify code snippet management for developers of all levels. Our mission is to provide a seamless and efficient solution for organizing and accessing code snippets, ultimately enhancing productivity and streamlining the development workflow.
 
