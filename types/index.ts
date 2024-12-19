@@ -28,16 +28,5 @@ export const createAndEditSnippetSchema = z.object({
     }),
     highlightedLines: z
         .union([z.string(), z.array(z.string())])
-        .transform((val) => (Array.isArray(val) ? val : [val])) // Ensure it's always an array of strings
-        .refine(
-            (val) => {
-                if (!val || val.length === 0) return true // If optional and not provided, it's valid
-                // Check if all strings in the array or single string follow the pattern
-                return /^(\d+)(,(\d+))*$/.test(val.join(','))
-            },
-            {
-                message:
-                    'Highlight lines must be a comma-separated list of numbers (e.g., 1,4,6).',
-            }
-        ),
+        .transform((val) => (Array.isArray(val) ? val : [val])), // Ensure it's always an array of strings
 })
