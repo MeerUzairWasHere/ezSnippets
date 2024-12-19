@@ -26,7 +26,7 @@ const CreateSnippetForm = () => {
         title: '', // Title of the snippet
         code: ``, // Code content
         language: '',
-        highlightedLines: [''],
+        highlightedLines: [],
     }
 
     const form = useForm<z.infer<typeof createAndEditSnippetSchema>>({

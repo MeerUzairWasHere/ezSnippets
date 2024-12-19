@@ -1,20 +1,5 @@
 'use client'
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card'
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip'
-
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Check, Copy } from 'lucide-react'

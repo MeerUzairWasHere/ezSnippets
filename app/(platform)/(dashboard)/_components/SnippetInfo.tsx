@@ -16,7 +16,7 @@ export const SnippetInfo = ({ id }: { id: string }) => {
     return (
         <SnippetCard
             title={title}
-            id={id}
+            id={id.toString()}
             highlightLines={highlightLines}
             language={language}
             code={code}

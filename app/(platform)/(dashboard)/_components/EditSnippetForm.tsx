@@ -64,8 +64,6 @@ export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
 
     // 2. Define a submit handler.
     function onSubmit(values: CreateAndEditSnippetType) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
         mutate(values)
     }
 

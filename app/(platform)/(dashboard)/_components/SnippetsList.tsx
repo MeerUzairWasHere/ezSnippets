@@ -46,7 +46,7 @@ export const SnippetsList = () => {
                                     filename={title}
                                     code={code}
                                     highlightedLines={highlightedLines}
-                                    id={_id}
+                                    id={_id.toString()}
                                     language={language}
                                 />
                             </div>

@@ -22,7 +22,6 @@ export const createSnippet = async (
         const snippet: SnippetType = await Snippet.create({
             ...values,
             clerkUserId,
-            highlighLines: values?.highlightLines,
         })
         return snippet
     } catch (error) {
