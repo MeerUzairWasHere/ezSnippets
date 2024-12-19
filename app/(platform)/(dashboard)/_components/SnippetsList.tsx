@@ -39,7 +39,7 @@ export const SnippetsList = () => {
                     {snippets?.map(
                         ({ _id, language, highlightedLines, title, code }) => (
                             <div
-                                className="h-72 overflow-hidden rounded-lg"
+                                className="max-h-72 overflow-hidden rounded-lg"
                                 key={_id}
                             >
                                 <DynamicCodeBlock

@@ -36,7 +36,6 @@ export const SnippetCard = ({
     title,
     language,
     code,
-    isInfo = false,
     highlightLines,
 }: ISnippet) => {
     if (language == undefined) {
@@ -52,9 +51,19 @@ export const SnippetCard = ({
                 language={language}
                 highlightLines={numArr}
                 code={code}
+                isScrollable={true}
                 isInfoCard={true}
             />
         )
     }
-
+    return (
+        <CodeBlock
+            id={id}
+            filename={title}
+            language={language}
+            code={code}
+            isScrollable={true}
+            isInfoCard={true}
+        />
+    )
 }
