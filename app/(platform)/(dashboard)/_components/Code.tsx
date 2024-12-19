@@ -16,8 +16,10 @@ const DynamicCodeBlock: React.FC<DynamicCodeBlockProps> = ({
     highlightedLines,
     id,
 }) => {
-    const lines = highlightedLines?.map((n) => Number(n))
-
+    const lines = highlightedLines
+        ?.join(',')
+        .split(',')
+        ?.map((n) => Number(n))
     return (
         <Link href={`/snippets/${id}`}>
             <CodeBlock

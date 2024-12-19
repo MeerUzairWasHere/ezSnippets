@@ -13,6 +13,10 @@ export const SnippetInfo = ({ id }: { id: string }) => {
     const code = data?.code || ''
     const language = data?.language || 'jsx'
     const highlightLines = data?.highlightedLines
+        ?.join(',')
+        .split(',')
+        ?.map((n) => n)
+
     return (
         <SnippetCard
             title={title}
