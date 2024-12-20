@@ -56,8 +56,10 @@ const CreateSnippetForm = () => {
         mutate(values)
     }
 
-    const dummyComponentCode = `import { useState } from 'react'
+    const dummyComponentCode = `e.g. 
     
+  import { useState } from 'react'
+  
   const DummyComponent = () => {
   const [count, setCount] = React.useState(0);
 
@@ -82,7 +84,10 @@ const CreateSnippetForm = () => {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mb-5 space-y-8"
+            >
                 <FormField
                     control={form.control}
                     name="title"
