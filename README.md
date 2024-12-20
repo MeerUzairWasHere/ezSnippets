@@ -37,7 +37,8 @@
 
 ## About The Project
 
-![Screen Shot](https://raw.githubusercontent.com/MeerUzairWasHere/ezSnippets/main/demo.png)
+![Screen Shot](https://github.com/user-attachments/assets/42104d9a-73be-4730-92a0-f46c4b317958)
+
 
 <b>ezSnippets</b> is a powerful web application designed to simplify code snippet management for developers of all levels. Our mission is to provide a seamless and efficient solution for organizing and accessing code snippets, ultimately enhancing productivity and streamlining the development workflow.
 
@@ -95,8 +96,8 @@ npm install
 3. Add the following environment variables to your `.env` file:
 
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bGl0ZXJhdGUtYmFib29uLTM0LmNsZXJrLmFjY291bnRzLmRldiQ
-CLERK_SECRET_KEY=sk_test_n7Ym4r2mbLw3LHKfAjHUHxqfJNUbf8xWrVbpbl9ort
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bGl0ZXJhdGUtYmFiasdasdasdasdmFjY291bnRzLmRldiQ
+CLERK_SECRET_KEY=sk_test_n7Ym4r2mbLw3LasdasdasdasdasWrVbpbl9ort
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/snippets
