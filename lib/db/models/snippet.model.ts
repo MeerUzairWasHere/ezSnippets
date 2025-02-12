@@ -1,5 +1,20 @@
 import { Schema, model, models } from 'mongoose'
 
+const TabSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    code: {
+        type: String,
+        required: true,
+    },
+    language: {
+        type: String,
+        required: true,
+    },
+})
+
 const SnippetSchema = new Schema({
     clerkUserId: {
         type: String,
@@ -9,16 +24,22 @@ const SnippetSchema = new Schema({
         type: String,
         required: true,
     },
+    filename: {
+        type: String,
+        required: true,
+    },
     highlightedLines: {
         type: [String],
     },
-    language: {
-        type: String,
+    tabs: {
+        type: [TabSchema],
         required: true,
-    },
-    code: {
-        type: String,
-        required: true,
+        validate: {
+            validator: function (tabs: any) {
+                return tabs.length > 0
+            },
+            message: 'At least one tab is required',
+        },
     },
     createdAt: {
         type: Date,
