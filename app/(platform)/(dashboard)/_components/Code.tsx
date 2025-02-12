@@ -21,14 +21,25 @@ const DynamicCodeBlock: React.FC<DynamicCodeBlockProps> = ({
         .split(',')
         ?.map((n) => Number(n))
     return (
-        <Link href={`/snippets/${id}`}>
-            <CodeBlock
-                highlightLines={lines}
-                filename={filename}
-                language={language}
-                code={code}
-            />
-        </Link>
+        // @
+        <CodeBlock
+            highlightLines={lines}
+            id={id}
+            filename={filename}
+            tabs={[
+                {
+                    name: 'JavaScript',
+                    code: code,
+                    language: 'javascript',
+                },
+                {
+                    name: 'Css',
+                    code: 'CSS',
+                    language: 'javascript',
+                },
+            ]}
+            language={language}
+        />
     )
 }
 
