@@ -19,14 +19,20 @@ import { createSnippet } from '@/actions/snippet.actions'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
+import { Plus, Minus } from 'lucide-react'
 
 const CreateSnippetForm = () => {
     const router = useRouter()
     const initialValues: CreateAndEditSnippetType = {
         title: '', // Title of the snippet
-        code: ``, // Code content
-        language: '',
         highlightedLines: [],
+        tabs: [
+            {
+                name: '',
+                code: '',
+                language: '',
+            },
+        ],
     }
 
     const form = useForm<z.infer<typeof createAndEditSnippetSchema>>({
@@ -48,19 +54,36 @@ const CreateSnippetForm = () => {
         },
     })
 
-    // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof createAndEditSnippetSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        // await createSnippet(values)
         mutate(values)
     }
 
+    const addTab = () => {
+        const currentTabs = form.getValues('tabs')
+        form.setValue('tabs', [
+            ...currentTabs,
+            {
+                name: '',
+                code: '',
+                language: '',
+            },
+        ])
+    }
+
+    const removeTab = (index: number) => {
+        const currentTabs = form.getValues('tabs')
+        if (currentTabs.length > 1) {
+            form.setValue(
+                'tabs',
+                currentTabs.filter((_, i) => i !== index)
+            )
+        }
+    }
+
     const dummyComponentCode = `e.g. 
-    
-  import { useState } from 'react'
+import { useState } from 'react'
   
-  const DummyComponent = () => {
+const DummyComponent = () => {
   const [count, setCount] = React.useState(0);
 
   const handleClick = () => {
@@ -69,8 +92,8 @@ const CreateSnippetForm = () => {
 
   return (
     <div className="p-4 border rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Fights Counter</h2>
-      <p className="mb-2">Fight Club Fights Count: {count}</p>
+      <h2 className="text-xl font-bold mb-4">Counter</h2>
+      <p className="mb-2">Count: {count}</p>
       <button 
         onClick={handleClick}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -79,8 +102,7 @@ const CreateSnippetForm = () => {
       </button>
     </div>
   );
-};
-`
+};`
 
     return (
         <Form {...form}>
@@ -93,10 +115,10 @@ const CreateSnippetForm = () => {
                     name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>File Name</FormLabel>
+                            <FormLabel>Title</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. index.html, style.css, script.js"
+                                    placeholder="e.g. React Counter Component"
                                     {...field}
                                 />
                             </FormControl>
@@ -104,22 +126,9 @@ const CreateSnippetForm = () => {
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="language"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Language</FormLabel>
-                            <FormControl>
-                                <Input
-                                    placeholder="e.g. jsx, tsx, css"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+
+             
+
                 <FormField
                     control={form.control}
                     name="highlightedLines"
@@ -137,25 +146,98 @@ const CreateSnippetForm = () => {
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="code"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Code</FormLabel>
-                            <FormControl>
-                                <Textarea
-                                    placeholder={dummyComponentCode}
-                                    rows={14}
-                                    className="resize-none"
-                                    {...field}
-                                />
-                            </FormControl>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-medium">Tabs</h3>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={addTab}
+                        >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Tab
+                        </Button>
+                    </div>
 
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                    {form.watch('tabs').map((_, index) => (
+                        <div
+                            key={index}
+                            className="space-y-4 rounded-lg border p-4"
+                        >
+                            <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Tab {index + 1}</h4>
+                                {index > 0 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => removeTab(index)}
+                                    >
+                                        <Minus className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.name`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tab Name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. JavaScript"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.language`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Language</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. javascript"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.code`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder={
+                                                    index === 0
+                                                        ? dummyComponentCode
+                                                        : 'Enter your code here...'
+                                                }
+                                                rows={14}
+                                                className="resize-none"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    ))}
+                </div>
 
                 <Button disabled={isPending} type="submit">
                     {isPending ? 'Submitting...' : 'Submit'}
@@ -164,4 +246,5 @@ const CreateSnippetForm = () => {
         </Form>
     )
 }
+
 export default CreateSnippetForm
