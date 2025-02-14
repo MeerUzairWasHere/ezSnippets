@@ -109,7 +109,7 @@ const EditSnippetForm = ({ id }: EditSnippetFormProps) => {
             await updateSnippetAction(id, transformedValues)
 
             toast({ description: 'Snippet updated successfully' })
-            router.push('/snippets')
+            router.push('/snippets/' + id)
             router.refresh() // Refresh the page to show updated data
         } catch (error) {
             toast({ description: 'Something went wrong' })
