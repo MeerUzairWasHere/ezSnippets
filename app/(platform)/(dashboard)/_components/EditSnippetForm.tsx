@@ -179,7 +179,7 @@ const DummyComponent = () => {
                             <FormLabel>Filename</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. React Counter Component"
+                                    placeholder="e.g. React Counter Component with useState"
                                     {...field}
                                 />
                             </FormControl>
@@ -246,7 +246,7 @@ const DummyComponent = () => {
                                         <FormLabel>Tab Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="e.g. JavaScript"
+                                                placeholder="e.g. index.js"
                                                 {...field}
                                             />
                                         </FormControl>
