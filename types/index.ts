@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongoose'
-import language from 'react-syntax-highlighter/dist/esm/languages/hljs/1c'
 import { z } from 'zod'
 
 // types
