@@ -17,14 +17,18 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { createSnippet } from '@/actions/snippet.actions'
 import { useRouter } from 'next/navigation'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import { Plus, Minus } from 'lucide-react'
+import { useState } from 'react'
 
 const CreateSnippetForm = () => {
     const router = useRouter()
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const { toast } = useToast()
+
     const initialValues: CreateAndEditSnippetType = {
-        title: '', // Title of the snippet
+        title: '',
+        filename: '',
         highlightedLines: [],
         tabs: [
             {
@@ -39,23 +43,27 @@ const CreateSnippetForm = () => {
         resolver: zodResolver(createAndEditSnippetSchema),
         defaultValues: initialValues,
     })
-    const queryClient = useQueryClient()
-    const { toast } = useToast()
-    const { mutate, isPending } = useMutation({
-        mutationFn: (values: CreateAndEditSnippetType) => createSnippet(values),
-        onSuccess: (data) => {
+
+    async function onSubmit(
+        values: z.infer<typeof createAndEditSnippetSchema>
+    ) {
+        try {
+            setIsSubmitting(true)
+            const data = await createSnippet(values)
+
             if (!data) {
-                toast({ description: 'there was an error' })
+                toast({ description: 'There was an error' })
                 return
             }
-            toast({ description: 'Snippet created' })
-            queryClient.invalidateQueries({ queryKey: ['snippets'] })
-            router.push('/snippets')
-        },
-    })
 
-    function onSubmit(values: z.infer<typeof createAndEditSnippetSchema>) {
-        mutate(values)
+            toast({ description: 'Snippet created' })
+            router.push('/snippets')
+            router.refresh() // Refresh the page to show updated data
+        } catch (error) {
+            toast({ description: 'Something went wrong' })
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const addTab = () => {
@@ -127,7 +135,22 @@ const DummyComponent = () => {
                     )}
                 />
 
-             
+                <FormField
+                    control={form.control}
+                    name="filename"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Filename</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="e.g. React Counter Component"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
@@ -239,8 +262,8 @@ const DummyComponent = () => {
                     ))}
                 </div>
 
-                <Button disabled={isPending} type="submit">
-                    {isPending ? 'Submitting...' : 'Submit'}
+                <Button disabled={isSubmitting} type="submit">
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                 </Button>
             </form>
         </Form>
