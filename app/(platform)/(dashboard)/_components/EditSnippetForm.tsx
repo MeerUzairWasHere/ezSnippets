@@ -176,7 +176,7 @@ const DummyComponent = () => {
                     name="filename"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Filename</FormLabel>
+                            <FormLabel>Title</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="e.g. React Counter Component with useState"
