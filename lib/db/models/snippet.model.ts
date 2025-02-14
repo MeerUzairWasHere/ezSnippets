@@ -13,6 +13,9 @@ const TabSchema = new Schema({
         type: String,
         required: true,
     },
+    highlightedLines: {
+        type: [Number],
+    },
 })
 
 const SnippetSchema = new Schema({
@@ -20,16 +23,14 @@ const SnippetSchema = new Schema({
         type: String,
         required: true,
     },
-    title: {
-        type: String,
-        required: true,
-    },
+
     filename: {
         type: String,
         required: true,
     },
-    highlightedLines: {
-        type: [String],
+    language: {
+        type: String,
+        required: true,
     },
     tabs: {
         type: [TabSchema],
