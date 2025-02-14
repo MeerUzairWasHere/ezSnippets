@@ -5,7 +5,7 @@ import Link from 'next/link'
 async function SnippetsPage() {
     const snippets = await getAllSnippetsAction()
     return (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-6 mb-4">
             {!snippets || snippets.length < 1 ? (
                 <main className="ml-6">
                     <div>
