@@ -1,11 +1,9 @@
 import { getAllSnippetsAction } from '@/actions/snippet.actions'
 import { CodeBlock } from '@/components/ui/code-block'
-import { SnippetType } from '@/types'
 import Link from 'next/link'
 
 async function SnippetsPage() {
     const snippets = await getAllSnippetsAction()
-    console.log(snippets)
     return (
         <div className="grid grid-cols-1 gap-6">
             {!snippets || snippets.length < 1 ? (
