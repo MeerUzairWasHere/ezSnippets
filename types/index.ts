@@ -1,19 +1,23 @@
+import { ObjectId } from 'mongoose'
+import language from 'react-syntax-highlighter/dist/esm/languages/hljs/1c'
 import { z } from 'zod'
 
 // types
 export type SnippetType = {
     _id: string
     clerkUserId: string
-    title: string
     filename: string
+    language: string
     createdAt: Date
-    highlightedLines?: string[]
     tabs: TabType[]
+    __v?: number
 }
 export type TabType = {
     name: string
     code: string
     language: string
+    _id?: any
+    highlightedLines?: number[]
 }
 
 const TabSchema = z.object({
@@ -26,18 +30,16 @@ const TabSchema = z.object({
     language: z.string().min(1, {
         message: 'Must be a valid language.',
     }),
+    highlightedLines: z.optional(z.string() || z.number()),
 })
 
 export const createAndEditSnippetSchema = z.object({
-    title: z.string().min(2, {
-        message: 'Title must be at least 2 characters.',
-    }),
     filename: z.string().min(2, {
         message: 'Filename must be at least 2 characters.',
     }),
-    highlightedLines: z
-        .union([z.string(), z.array(z.string())])
-        .transform((val) => (Array.isArray(val) ? val : [val])),
+    language: z.string().min(2, {
+        message: 'Language must be at least 2 characters.',
+    }),
     tabs: z.array(TabSchema).min(1, {
         message: 'At least one tab is required.',
     }),
