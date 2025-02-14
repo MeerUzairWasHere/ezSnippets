@@ -5,5 +5,5 @@ export default function PlatformLayout({
 }: {
     children: React.ReactNode
 }) {
-    return <ClerkProvider>{children}</ClerkProvider>
+    return <ClerkProvider afterSignOutUrl={'/'}>{children}</ClerkProvider>
 }
