@@ -34,7 +34,6 @@ export const Navbar = () => {
             </div>
             <div className="ml-auto flex items-center gap-x-2">
                 <UserButton
-                    afterSignOutUrl="/"
                     appearance={{
                         elements: {
                             avatarBox: {
