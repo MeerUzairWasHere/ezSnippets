@@ -27,14 +27,14 @@ const CreateSnippetForm = () => {
     const { toast } = useToast()
 
     const initialValues: CreateAndEditSnippetType = {
-        filename: 'abc.jsx',
-        language: 'jsx',
+        filename: '',
+        language: '',
         tabs: [
             {
-                name: 'abc.jsx',
-                code: 'console.log("Hello, world!")',
-                language: 'jsx',
-                highlightedLines: '1, 2, 3',
+                name: '',
+                code: '',
+                language: '',
+                highlightedLines: '',
             },
         ],
     }
@@ -139,10 +139,10 @@ const DummyComponent = () => {
                     name="filename"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Filename</FormLabel>
+                            <FormLabel>Title</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. React Counter Component"
+                                    placeholder="e.g. React Counter Component with useState"
                                     {...field}
                                 />
                             </FormControl>
@@ -159,7 +159,7 @@ const DummyComponent = () => {
                             <FormLabel>Language</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. React Counter Component"
+                                    placeholder="e.g. javascript"
                                     {...field}
                                 />
                             </FormControl>
@@ -209,7 +209,7 @@ const DummyComponent = () => {
                                         <FormLabel>Tab Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="e.g. JavaScript"
+                                                placeholder="e.g. index.js"
                                                 {...field}
                                             />
                                         </FormControl>
