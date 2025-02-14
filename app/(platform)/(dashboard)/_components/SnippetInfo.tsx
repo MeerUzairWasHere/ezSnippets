@@ -1,30 +1,115 @@
 'use client'
-import { useQuery } from '@tanstack/react-query'
+
+import { useState, useEffect } from 'react'
 import { getSingleSnippetsAction } from '@/actions/snippet.actions'
-import { SnippetCard } from './SnippetCard'
+import { CreateAndEditSnippetType } from '@/types'
+import { useToast } from '@/components/ui/use-toast'
 
-export const SnippetInfo = ({ id }: { id: string }) => {
-    const { data } = useQuery({
-        queryKey: ['snippet', id],
-        queryFn: () => getSingleSnippetsAction(id),
-    })
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import { Pencil } from 'lucide-react'
+import { DeleteSnippet } from './DeleteSnippet'
 
-    const title = data?.title || ''
-    const code = data?.code || ''
-    const language = data?.language || 'jsx'
-    const highlightLines = data?.highlightedLines
-        ?.join(',')
-        .split(',')
-        ?.map((n) => n)
+interface CodeBlockProps {
+    code: string
+    language: string
+    highlightedLines?: string[]
+}
 
+const CodeBlock = ({ code, language, highlightedLines }: CodeBlockProps) => {
     return (
-        <SnippetCard
-            title={title}
-            id={id.toString()}
-            highlightLines={highlightLines}
-            language={language}
-            code={code}
-            isInfo={true}
-        />
+        <pre className="relative rounded-lg bg-gray-900 p-4">
+            <code className={`language-${language}`}>{code}</code>
+        </pre>
     )
 }
+
+export const SnippetInfo = ({ snippetId }: { snippetId: string }) => {
+    const [snippet, setSnippet] = useState<CreateAndEditSnippetType | null>(
+        null
+    )
+    const [isLoading, setIsLoading] = useState(true)
+    const { toast } = useToast()
+    const router = useRouter()
+
+    useEffect(() => {
+        const loadSnippet = async () => {
+            try {
+                const data = await getSingleSnippetsAction(snippetId)
+                if (data) {
+                    setSnippet(data)
+                } else {
+                    toast({ description: 'Snippet not found' })
+                }
+            } catch (error) {
+                toast({ description: 'Error loading snippet' })
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        loadSnippet()
+    }, [snippetId, toast])
+
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
+
+    if (!snippet) {
+        return <div>Snippet not found</div>
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold">{snippet.title}</h1>
+                    <p className="text-gray-500">{snippet.filename}</p>
+                </div>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                            router.push(`/snippets/edit/${snippetId}`)
+                        }
+                    >
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                    </Button>
+                    <DeleteSnippet id={snippetId} />
+                </div>
+            </div>
+
+            <Tabs
+                defaultValue={snippet.tabs[0]?.name || 'tab-1'}
+                className="w-full"
+            >
+                <TabsList>
+                    {snippet.tabs.map((tab, index) => (
+                        <TabsTrigger
+                            key={index}
+                            value={tab.name || `tab-${index + 1}`}
+                        >
+                            {tab.name || `Tab ${index + 1}`}
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+                {snippet.tabs.map((tab, index) => (
+                    <TabsContent
+                        key={index}
+                        value={tab.name || `tab-${index + 1}`}
+                    >
+                        <CodeBlock
+                            code={tab.code}
+                            language={tab.language}
+                            highlightedLines={snippet.highlightedLines}
+                        />
+                    </TabsContent>
+                ))}
+            </Tabs>
+        </div>
+    )
+}
+
+export default SnippetInfo
