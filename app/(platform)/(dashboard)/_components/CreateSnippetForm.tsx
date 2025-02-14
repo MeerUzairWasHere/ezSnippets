@@ -27,14 +27,14 @@ const CreateSnippetForm = () => {
     const { toast } = useToast()
 
     const initialValues: CreateAndEditSnippetType = {
-        title: '',
-        filename: '',
-        highlightedLines: [],
+        filename: 'abc.jsx',
+        language: 'jsx',
         tabs: [
             {
-                name: '',
-                code: '',
-                language: '',
+                name: 'abc.jsx',
+                code: 'console.log("Hello, world!")',
+                language: 'jsx',
+                highlightedLines: '1, 2, 3',
             },
         ],
     }
@@ -49,12 +49,28 @@ const CreateSnippetForm = () => {
     ) {
         try {
             setIsSubmitting(true)
-            const data = await createSnippet(values)
 
-            if (!data) {
-                toast({ description: 'There was an error' })
-                return
+            // Transform highlightedLines to an array of numbers
+            const transformedValues = {
+                ...values,
+                tabs: values.tabs.map((tab) => ({
+                    ...tab,
+                    highlightedLines:
+                        typeof tab.highlightedLines === 'string' &&
+                        tab.highlightedLines.trim() !== ''
+                            ? tab.highlightedLines
+                                  .split(',')
+                                  .map((num) => num.trim())
+                                  .filter((num) => !isNaN(Number(num))) // Ensure only numbers
+                                  .map(Number)
+                            : Array.isArray(tab.highlightedLines)
+                              ? tab.highlightedLines
+                              : [],
+                })),
             }
+
+            // @ts-ignore
+            await createSnippet(transformedValues)
 
             toast({ description: 'Snippet created' })
             router.push('/snippets')
@@ -120,23 +136,6 @@ const DummyComponent = () => {
             >
                 <FormField
                     control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                                <Input
-                                    placeholder="e.g. React Counter Component"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
                     name="filename"
                     render={({ field }) => (
                         <FormItem>
@@ -154,13 +153,13 @@ const DummyComponent = () => {
 
                 <FormField
                     control={form.control}
-                    name="highlightedLines"
+                    name="language"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Highlighted Lines</FormLabel>
+                            <FormLabel>Language</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. 4, 7, 8, 9"
+                                    placeholder="e.g. React Counter Component"
                                     {...field}
                                 />
                             </FormControl>
@@ -228,6 +227,24 @@ const DummyComponent = () => {
                                         <FormControl>
                                             <Input
                                                 placeholder="e.g. javascript"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.highlightedLines`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Highlighted Lines</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                placeholder="e.g. 4, 7, 8, 9"
                                                 {...field}
                                             />
                                         </FormControl>
