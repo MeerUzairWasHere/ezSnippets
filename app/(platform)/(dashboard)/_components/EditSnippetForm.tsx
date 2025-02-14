@@ -1,9 +1,9 @@
 'use client'
 
+import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-
-import { Button } from '@/components/ui/button'
+import { createAndEditSnippetSchema, CreateAndEditSnippetType } from '@/types'
 import {
     Form,
     FormControl,
@@ -12,73 +12,132 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import { useToast } from '@/components/ui/use-toast'
-import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
     getSingleSnippetsAction,
     updateSnippetAction,
 } from '@/actions/snippet.actions'
-import { CreateAndEditSnippetType, createAndEditSnippetSchema } from '@/types'
-import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/ui/use-toast'
+import { Plus, Minus } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
-export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
-    const queryClient = useQueryClient()
-    const { toast } = useToast()
+const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
     const router = useRouter()
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const { toast } = useToast()
 
-    const { data } = useQuery({
-        queryKey: ['snippet', snippetId],
-        queryFn: () => getSingleSnippetsAction(snippetId),
-    })
-    const { mutate, isPending } = useMutation({
-        mutationFn: (values: CreateAndEditSnippetType) => {
-            return updateSnippetAction(snippetId, values)
-        },
-        onSuccess: (data) => {
-            if (!data) {
-                toast({
-                    description: 'there was an error',
-                })
-                return
-            }
-            toast({ description: 'Snippet updated' })
-            queryClient.invalidateQueries({ queryKey: ['snippets'] })
-            queryClient.invalidateQueries({ queryKey: ['snippet', snippetId] })
-            router.push('/snippets')
-            // form.reset();
-        },
-    })
-
-    // 1. Define your form.
-    const form = useForm<CreateAndEditSnippetType>({
+    const form = useForm<z.infer<typeof createAndEditSnippetSchema>>({
         resolver: zodResolver(createAndEditSnippetSchema),
         defaultValues: {
-            title: data?.title || '',
-            code: data?.code || '',
-            language: data?.language || '',
-            highlightedLines: data?.highlightedLines,
+            title: '',
+            filename: '',
+            highlightedLines: [],
+            tabs: [
+                {
+                    name: '',
+                    code: '',
+                    language: '',
+                },
+            ],
         },
     })
 
-    // 2. Define a submit handler.
-    function onSubmit(values: CreateAndEditSnippetType) {
-        mutate(values)
+    useEffect(() => {
+        const loadSnippet = async () => {
+            try {
+                const data = await getSingleSnippetsAction(snippetId)
+                if (data) {
+                    form.reset({
+                        title: data.title,
+                        filename: data.filename,
+                        highlightedLines: data.highlightedLines,
+                        tabs: data.tabs || [
+                            {
+                                name: '',
+                                code: '',
+                                language: '',
+                            },
+                        ],
+                    })
+                }
+            } catch (error) {
+                toast({ description: 'Error loading snippet' })
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        loadSnippet()
+    }, [snippetId, form, toast])
+
+    async function onSubmit(
+        values: z.infer<typeof createAndEditSnippetSchema>
+    ) {
+        try {
+            setIsSubmitting(true)
+            const data = await updateSnippetAction(snippetId, values)
+
+            if (!data) {
+                toast({ description: 'There was an error' })
+                return
+            }
+
+            toast({ description: 'Snippet updated' })
+            router.push('/snippets')
+            router.refresh()
+        } catch (error) {
+            toast({ description: 'Something went wrong' })
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    const addTab = () => {
+        const currentTabs = form.getValues('tabs')
+        form.setValue('tabs', [
+            ...currentTabs,
+            {
+                name: '',
+                code: '',
+                language: '',
+            },
+        ])
+    }
+
+    const removeTab = (index: number) => {
+        const currentTabs = form.getValues('tabs')
+        if (currentTabs.length > 1) {
+            form.setValue(
+                'tabs',
+                currentTabs.filter((_, i) => i !== index)
+            )
+        }
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mb-5">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mb-5 space-y-8"
+            >
+                {/* Form fields remain the same as CreateSnippetForm */}
                 <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>File Name</FormLabel>
+                            <FormLabel>Title</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. index.html, style.css, script.js"
+                                    placeholder="e.g. React Counter Component"
                                     {...field}
                                 />
                             </FormControl>
@@ -89,13 +148,13 @@ export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
 
                 <FormField
                     control={form.control}
-                    name="language"
+                    name="filename"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Language</FormLabel>
+                            <FormLabel>Filename</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="e.g. jsx, tsx, css"
+                                    placeholder="e.g. React Counter Component"
                                     {...field}
                                 />
                             </FormControl>
@@ -121,30 +180,101 @@ export const EditSnippetForm = ({ snippetId }: { snippetId: string }) => {
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="code"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Code</FormLabel>
-                            <FormControl>
-                                <Textarea
-                                    placeholder="Your code goes here"
-                                    rows={14}
-                                    className="resize-none"
-                                    {...field}
-                                />
-                            </FormControl>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-medium">Tabs</h3>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={addTab}
+                        >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Tab
+                        </Button>
+                    </div>
 
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                    {form.watch('tabs').map((_, index) => (
+                        <div
+                            key={index}
+                            className="space-y-4 rounded-lg border p-4"
+                        >
+                            <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Tab {index + 1}</h4>
+                                {index > 0 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => removeTab(index)}
+                                    >
+                                        <Minus className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
 
-                <Button disabled={isPending} type="submit">
-                    {isPending ? 'Submitting...' : 'Submit'}
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.name`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tab Name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. JavaScript"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.language`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Language</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. javascript"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`tabs.${index}.code`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Enter your code here..."
+                                                rows={14}
+                                                className="resize-none"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                <Button disabled={isSubmitting} type="submit">
+                    {isSubmitting ? 'Updating...' : 'Update Snippet'}
                 </Button>
             </form>
         </Form>
     )
 }
+
+export default EditSnippetForm
