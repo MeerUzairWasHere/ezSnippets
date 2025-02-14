@@ -5,9 +5,8 @@ export type SnippetType = {
     _id: string
     clerkUserId: string
     title: string
-    code: string
+    filename: string
     createdAt: Date
-    language: string
     highlightedLines?: string[]
     tabs: TabType[]
 }
@@ -32,6 +31,9 @@ const TabSchema = z.object({
 export const createAndEditSnippetSchema = z.object({
     title: z.string().min(2, {
         message: 'Title must be at least 2 characters.',
+    }),
+    filename: z.string().min(2, {
+        message: 'Filename must be at least 2 characters.',
     }),
     highlightedLines: z
         .union([z.string(), z.array(z.string())])
