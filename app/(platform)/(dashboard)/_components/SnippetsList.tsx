@@ -1,23 +1,14 @@
-'use client'
-
 import { getAllSnippetsAction } from '@/actions/snippet.actions'
-import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import DynamicCodeBlock from './Code'
 import { SnippetType } from '@/types'
 
-export const SnippetsList = () => {
-    const { data, isPending } = useQuery({
-        queryKey: ['snippets'],
-        queryFn: () => getAllSnippetsAction(),
-    })
-    const snippets: SnippetType[] = JSON.parse(JSON.stringify(data)) || []
-
-    if (isPending) return <h2 className="text-xl">Please wait...</h2>
-
+export const SnippetsList = async () => {
+    const snippets = await getAllSnippetsAction()
+    console.log(snippets)
     return (
         <div className="grid grid-cols-1 gap-6">
-            {snippets?.length < 1 ? (
+            {/* {!snippets || snippets.length < 1 ? (
                 <main className="ml-6">
                     <div>
                         <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">
@@ -36,7 +27,7 @@ export const SnippetsList = () => {
                 </main>
             ) : (
                 <>
-                    {snippets?.map(
+                    {snippets.map(
                         ({ _id, language, highlightedLines, title, code }) => (
                             <div
                                 className="max-h-72 overflow-hidden rounded-lg"
@@ -53,7 +44,7 @@ export const SnippetsList = () => {
                         )
                     )}
                 </>
-            )}
+            )} */}
         </div>
     )
 }
