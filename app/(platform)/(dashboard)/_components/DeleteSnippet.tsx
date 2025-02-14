@@ -1,3 +1,4 @@
+'use client'
 import { deleteSnippetAction } from '@/actions/snippet.actions'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
