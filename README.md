@@ -50,7 +50,6 @@ e constructed ezSnippets using a robust combination of frameworks and tools to e
 - **Backend**: Mongoose and MongoDB handle efficient data storage and management, ensuring reliability and scalability.
 - **Authentication**: Clerk streamlines user authentication and management, prioritizing security and ease of use.
 - **UI Design**: TailwindCSS, along with either Shadcn-ui, enables customizable and visually appealing user interfaces.
-- **Data Fetching**: React Query enhances data fetching capabilities, optimizing performance and responsiveness.
 
 These frameworks and tools form the foundation of ezSnippets, empowering developers to organize and access their code snippets with ease while ensuring a delightful user experience.
 
