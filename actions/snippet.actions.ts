@@ -1,43 +1,43 @@
 'use server'
-
 import connectDB from '@/lib/db'
 import Snippet from '@/lib/db/models/snippet.model'
 import { SnippetType, CreateAndEditSnippetType } from '@/types'
-import { auth } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
-function getUserClerkId(): string {
-    const { userId } = auth()
-
-    if (!userId) redirect('/')
-    return userId
+async function getUserClerkId(): Promise<string> {
+    const user = await currentUser()
+    if (!user) redirect('/')
+    return user.id
 }
 
 export const createSnippet = async (
     values: CreateAndEditSnippetType
 ): Promise<SnippetType | null> => {
-    const clerkUserId = getUserClerkId()
+    const clerkUserId = await getUserClerkId()
     try {
         await connectDB()
         const snippet: SnippetType = await Snippet.create({
             ...values,
             clerkUserId,
         })
-        return snippet
+        // @ts-ignore
+        return JSON.parse(JSON.stringify(snippet))
     } catch (error) {
         console.log(error)
         return null
     }
 }
 
-export const getAllSnippetsAction = async (): Promise<SnippetType[] | null> => {
-    const clerkUserId = getUserClerkId()
-
+export const getAllSnippetsAction = async () => {
+    const clerkUserId = await getUserClerkId()
     try {
         await connectDB()
-        const snippets = await Snippet.find({ clerkUserId }).sort({
-            createdAt: 'desc',
-        })
+        const snippets = await Snippet.find({ clerkUserId })
+            .sort({
+                createdAt: 'desc',
+            })
+            .lean()
         return snippets
     } catch (error) {
         console.log(error)
@@ -45,17 +45,15 @@ export const getAllSnippetsAction = async (): Promise<SnippetType[] | null> => {
     }
 }
 
-export const getSingleSnippetsAction = async (
-    snippetId: string
-): Promise<SnippetType | null> => {
-    const clerkUserId = getUserClerkId()
+export const getSingleSnippetsAction = async (snippetId: string) => {
+    const clerkUserId = await getUserClerkId()
 
     try {
         await connectDB()
-        const snippets: SnippetType | null = await Snippet.findOne({
+        const snippets = await Snippet.findOne({
             clerkUserId,
             _id: snippetId,
-        })
+        }).lean()
         return snippets
     } catch (error) {
         console.log(error)
@@ -66,8 +64,8 @@ export const getSingleSnippetsAction = async (
 export async function updateSnippetAction(
     id: string,
     values: CreateAndEditSnippetType
-): Promise<SnippetType | null> {
-    const clerkUserId = getUserClerkId()
+) {
+    const clerkUserId = await getUserClerkId()
 
     try {
         const snippet = await Snippet.findOneAndUpdate(
@@ -77,7 +75,7 @@ export async function updateSnippetAction(
                 new: true,
                 runValidators: true,
             }
-        )
+        ).lean()
         return snippet
     } catch (error) {
         return null
@@ -85,13 +83,13 @@ export async function updateSnippetAction(
 }
 
 export const deleteSnippetAction = async (snippedId: string) => {
-    const clerkUserId = getUserClerkId()
+    const clerkUserId = await getUserClerkId()
     await connectDB()
     try {
         const snippet = await Snippet.findOneAndDelete({
             _id: snippedId,
             clerkUserId,
-        })
+        }).lean()
         return snippet
     } catch (error) {
         console.log(error)
