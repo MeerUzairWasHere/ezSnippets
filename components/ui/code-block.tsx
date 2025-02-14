@@ -14,7 +14,7 @@ type CodeBlockProps = {
     isInfoCard?: boolean
     language: string
     filename: string
-    highlightLines?: number[]
+    highlightedLines?: number[]
     isScrollable?: boolean // New prop to conditionally add scroll
 } & (
     | {
@@ -39,7 +39,7 @@ export const CodeBlock = ({
     filename,
     code,
     isInfoCard,
-    highlightLines = [],
+    highlightedLines = [],
     tabs = [],
     isScrollable = false, // Default to false
 }: CodeBlockProps) => {
@@ -61,14 +61,16 @@ export const CodeBlock = ({
     const activeLanguage = tabsExist
         ? tabs[activeTab].language || language
         : language
+    // @ts-ignore
     const activeHighlightLines = tabsExist
-        ? tabs[activeTab].highlightLines || []
-        : highlightLines
+        ? // @ts-ignore
+          tabs[activeTab].highlightedLines || []
+        : highlightedLines
 
     return (
         <>
             <div className="relative w-full rounded-lg bg-slate-900 p-4 font-mono text-sm">
-                <div className="flex flex-col gap-2 h-12">
+                <div className="flex h-12 flex-col gap-2">
                     <div className="flex text-xs text-zinc-400">{filename}</div>{' '}
                     {tabsExist && (
                         <div className="flex overflow-x-auto">
@@ -76,7 +78,7 @@ export const CodeBlock = ({
                                 <div key={index} className="flex items-center">
                                     <button
                                         onClick={() => setActiveTab(index)}
-                                        className={`px-3 font-sans text-xs text-nowrap transition-colors ${
+                                        className={`text-nowrap px-3 font-sans text-xs transition-colors ${
                                             activeTab === index
                                                 ? 'text-white'
                                                 : 'text-zinc-400 hover:text-zinc-200'
@@ -100,7 +102,11 @@ export const CodeBlock = ({
                     )}
                 </div>
 
-                <div className={isScrollable ? 'max-h-96 overflow-y-auto pt-2' : 'pt-2'}>
+                <div
+                    className={
+                        isScrollable ? 'max-h-96 overflow-y-auto pt-2' : 'pt-2'
+                    }
+                >
                     <Link href={`/snippets/${id}`}>
                         <SyntaxHighlighter
                             language={activeLanguage}
